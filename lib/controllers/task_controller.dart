@@ -11,6 +11,9 @@ abstract class TaskControllerBase with Store {
   TaskService taskService = TaskService();
 
   @observable
+  bool isLoading = false;
+
+  @observable
   late Task task;
 
   @observable
@@ -24,15 +27,17 @@ abstract class TaskControllerBase with Store {
 
   @action
   Future<Task> fetchById(String id) async {
+    this.isLoading = true;
     this.task = await this.taskService.fetchById(id);
-
+    this.isLoading = false;
     return this.task;
   }
 
   @action
   Future<void> fetchAll() async {
+    this.isLoading = true;
     this.tasks = await this.taskService.fetchAll();
-    // return this.tasks;
+    this.isLoading = false;
   }
 
   @action
