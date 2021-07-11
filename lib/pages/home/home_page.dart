@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:tareafas_app/controllers/task_controller.dart';
+import 'package:tareafas_app/core/app_colors.dart';
 
 import '/pages/home/widgets/appbar/app_bar_widget.dart';
 import 'widgets/card/card_add_tarefa.dart';
@@ -23,10 +25,24 @@ class HomePage extends StatelessWidget {
               taskController: taskController,
             ),
             SizedBox(height: 16),
-            Expanded(child: CardListTarefa(taskController: taskController))
+            _buildList()
           ],
         ),
       ),
     );
+  }
+
+  _buildList() {
+    return Observer(builder: (BuildContext context) {
+      if (taskController.isLoading) {
+        return Padding(
+          padding: const EdgeInsets.all(80),
+          child: CircularProgressIndicator(
+              strokeWidth: 2, color: AppColors.secondary),
+        );
+      }
+
+      return Expanded(child: CardListTarefa(taskController: taskController));
+    });
   }
 }
