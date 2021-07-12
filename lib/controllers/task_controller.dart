@@ -14,10 +14,27 @@ abstract class TaskControllerBase with Store {
   bool isLoading = false;
 
   @observable
+  bool isError = false;
+
+  @observable
   late Task task;
 
   @observable
   List<Task> tasks = ObservableList<Task>();
+
+  _prepareRequest(fn) async {
+    try {
+      this.isError = false;
+      this.isLoading = true;
+      return await fn();
+    } catch (error) {
+      this.isError = true;
+      print(error);
+      throw Exception("Error on server");
+    } finally {
+      this.isLoading = false;
+    }
+  }
 
   @action
   Future<void> create(String title, String description) async {
@@ -27,17 +44,15 @@ abstract class TaskControllerBase with Store {
 
   @action
   Future<Task> fetchById(String id) async {
-    this.isLoading = true;
-    this.task = await this.taskService.fetchById(id);
-    this.isLoading = false;
-    return this.task;
+    return _prepareRequest(() async {
+      this.task = await this.taskService.fetchById(id);
+      return this.task;
+    });
   }
 
   @action
   Future<void> fetchAll() async {
-    this.isLoading = true;
-    this.tasks = await this.taskService.fetchAll();
-    this.isLoading = false;
+    _prepareRequest(() async => this.tasks = await this.taskService.fetchAll());
   }
 
   @action

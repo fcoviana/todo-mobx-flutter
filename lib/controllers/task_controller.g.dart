@@ -24,6 +24,21 @@ mixin _$TaskController on TaskControllerBase, Store {
     });
   }
 
+  final _$isErrorAtom = Atom(name: 'TaskControllerBase.isError');
+
+  @override
+  bool get isError {
+    _$isErrorAtom.reportRead();
+    return super.isError;
+  }
+
+  @override
+  set isError(bool value) {
+    _$isErrorAtom.reportWrite(value, super.isError, () {
+      super.isError = value;
+    });
+  }
+
   final _$taskAtom = Atom(name: 'TaskControllerBase.task');
 
   @override
@@ -93,6 +108,7 @@ mixin _$TaskController on TaskControllerBase, Store {
   String toString() {
     return '''
 isLoading: ${isLoading},
+isError: ${isError},
 task: ${task},
 tasks: ${tasks}
     ''';
